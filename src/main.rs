@@ -1,10 +1,9 @@
 mod matching;
 use clap::Parser;
 use clap_verbosity_flag::Verbosity;
-use glob::Pattern;
 use parse_size::{parse_size, Error};
-use path_matchers::{glob, PathMatcher};
-use std::fs::*;
+use path_matchers::PathMatcher;
+use std::fs::{self, *};
 use std::path::{Path, PathBuf};
 use walkdir::{DirEntry, WalkDir};
 
@@ -140,11 +139,9 @@ fn main() {
 
     // Parse settings
     let base_directory = canonicalize_base_dir(&settings.directory);
-    // Log info
     info!("Culling directory: {}", base_directory.display());
-    info!("Culling to size: {}", settings.max_size);
 
-    if settings.group || settings.exclude.is_some() || settings.include_only.is_some() {
+    if settings.group {
         warn!("Group-by is still not implemented")
     }
 
@@ -180,18 +177,22 @@ fn main() {
             .expect("Last Modified Time is not available on this platform")
     });
 
-    for f in &deletable {
-        info!("Matched file: {}", f.0.path().display())
-    }
-
     // register_operations
     let operations = register_operations(deletable, size_to_free);
     // perform_operations
 
     if settings.dryrun {
         info!("Planned operations:");
-        for op in operations {
-            info!("Deleting file: {}", op.display())
+        for op in &operations {
+            info!("Delete file: {}", op.display())
+        }
+    } else {
+        for op in &operations {
+            if let Ok(()) = fs::remove_file(op) {
+                info!("Deleted file: {}", op.display())
+            } else {
+                warn!("Could not delete file: {}", op.display())
+            }
         }
     }
 }
