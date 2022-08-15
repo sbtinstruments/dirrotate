@@ -16,35 +16,35 @@ use matching::get_path_matcher;
 #[clap(author, version, about, long_about = None)]
 pub struct Cli {
     /// Directory to rotate
-    #[clap(value_parser)]
+    #[clap()]
     directory: PathBuf,
 
     /// Maximum filesize of the directory. Supply a number in bytes or with a suffix, e.g. 3K, 5MiB, etc.
-    #[clap(value_parser = size_parser)]
+    #[clap(parse(try_from_str = size_parser))]
     max_size: u64,
 
     /// Dry-run (only print operations)
-    #[clap(short, long, value_parser, default_value_t = false)]
+    #[clap(short, long)]
     dryrun: bool,
 
     /// Consider files with the same stem as a group and only delete whole groups.
-    #[clap(short, long, value_parser)]
+    #[clap(short, long)]
     group: bool,
 
     /// A glob pattern to only consider a subset of files, both in the size estimation and deletion.
-    #[clap(short, long, value_parser)]
+    #[clap(short, long)]
     include_only: Option<String>,
 
     /// A glob pattern to exclude a subset of files, both in the size estimation and deletion.
-    #[clap(short, long, value_parser, conflicts_with = "include-only")]
+    #[clap(short, long, conflicts_with = "include-only")]
     exclude: Option<String>,
 
     /// A glob pattern to protect a subset of files from deletion
-    #[clap(short, long, value_parser)]
+    #[clap(short, long)]
     select_for_op: Option<String>,
 
     /// A glob pattern to protect a subset of files from deletion
-    #[clap(short, long, value_parser, conflicts_with = "select-for-op")]
+    #[clap(short, long, conflicts_with = "select-for-op")]
     protect_from_op: Option<String>,
 
     #[clap(flatten)]
@@ -176,6 +176,8 @@ fn main() {
         x.1.modified()
             .expect("Last Modified Time is not available on this platform")
     });
+    // Reverse so that the oldest is at the back
+    deletable.reverse();
 
     // register_operations
     let operations = register_operations(deletable, size_to_free);
