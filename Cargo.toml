@@ -3,7 +3,9 @@ name = "dirrotate"
 version = "0.1.0"
 authors = ["Jonatan Midtgaard"]
 edition = "2018"
+license = "MIT"
 description = "Cull unwanted files from directories"
+homepage = "https://sbtinstruments.com"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -17,5 +19,6 @@ clap-verbosity-flag = "=1.0.0"
 glob = "0.3.0"
 walkdir = "2"
 path-matchers = "1.0"
+indexmap = "=1.8.2"
 parse-size = { version = "1.0.0", features = ["std"] }
 
