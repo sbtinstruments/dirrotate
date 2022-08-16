@@ -19,6 +19,8 @@ clap-verbosity-flag = "=1.0.0"
 glob = "0.3.0"
 walkdir = "2"
 path-matchers = "1.0"
-indexmap = "=1.8.2"
 parse-size = { version = "1.0.0", features = ["std"] }
+# dependencies of dependencies - needed to fix their version
+indexmap = "=1.8.2"
+clap_lex = "=0.2.0"
 
