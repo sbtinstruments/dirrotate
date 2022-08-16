@@ -1,3 +1,4 @@
+# The order matters here - it indicates a preference when encountering multilicenses
 accepted = [
     "MIT",
     "Apache-2.0",
